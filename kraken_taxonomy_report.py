@@ -94,21 +94,21 @@ def load_taxonomy( db_path, sanitize_names=False ):
             if sanitize_names:
                 name = NAME_RE.sub( NAME_REPL, name )
             name_type = fields[3]
-            if name in names:
-                print >> sys.stderr, 'Warning: name "%s" found at node "%s" but already exists originally for node "%s".' % ( name, node_id, names[name][0] )
-                new_name = "%s_%s" % ( name, node_id )
-                print >> sys.stderr, 'Transforming node "%s" named "%s" to "%s".' % ( node_id, name, new_name )
-                assert new_name not in names, 'Transformed Name "%s" already exists. Cannot recover at this time.' % new_name
-                if not names[name][1]:
-                    orig_new_name = "%s_%s" % ( name, names[name][0] )
-                    print >> sys.stderr, 'Transforming node "%s" named "%s" to "%s".' % ( names[name][0], name, orig_new_name )
-                    assert orig_new_name not in names, 'Transformed Name "%s" already exists. Cannot recover at this time.' % orig_new_name
-                    name_map[names[name][0]] = orig_new_name
-                    names[name] = ( names[name][0], True )
-                name = new_name
-            else:
-                names[name] = (node_id, False )
             if name_type == "scientific name":
+                if name in names:
+                    print >> sys.stderr, 'Warning: name "%s" found at node "%s" but already exists originally for node "%s".' % ( name, node_id, names[name][0] )
+                    new_name = "%s_%s" % ( name, node_id )
+                    print >> sys.stderr, 'Transforming node "%s" named "%s" to "%s".' % ( node_id, name, new_name )
+                    assert new_name not in names, 'Transformed Name "%s" already exists. Cannot recover at this time.' % new_name
+                    if not names[name][1]:
+                        orig_new_name = "%s_%s" % ( name, names[name][0] )
+                        print >> sys.stderr, 'Transforming node "%s" named "%s" to "%s".' % ( names[name][0], name, orig_new_name )
+                        assert orig_new_name not in names, 'Transformed Name "%s" already exists. Cannot recover at this time.' % orig_new_name
+                        name_map[names[name][0]] = orig_new_name
+                        names[name] = ( names[name][0], True )
+                    name = new_name
+                else:
+                    names[name] = (node_id, False )
                 name_map[ node_id ] = name
 
     with open( os.path.join( db_path, "taxonomy/nodes.dmp" ) ) as fh:
